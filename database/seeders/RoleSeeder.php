@@ -31,6 +31,6 @@ class RoleSeeder extends Seeder
                 'description' => 'pelanggan',
             ],
         ];
-        DB::table('roles')->insert($roles);
+        DB::table('users.roles')->insert($roles);
     }
 }

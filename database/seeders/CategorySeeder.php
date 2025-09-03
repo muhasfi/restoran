@@ -23,6 +23,6 @@ class CategorySeeder extends Seeder
                 'description' => 'All drinks and beverages',
             ],
         ];
-        DB::table('categories')->insert($categories);
+        DB::table('categorie.categories')->insert($categories);
     }
 }
