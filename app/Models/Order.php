@@ -6,10 +6,20 @@ use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
 {
-    protected $fillable = ['order_code', 'user_id', 'subtotal', 'tax', 'grand_total', 'status',
-     'table_number', 'payment_method', 'note', 'created_at', 'updated_at', 'deleted_at'];
+    protected $fillable = 
+    ['order_code', 
+    'user_id', 
+    'subtotal', 
+    'tax', 
+    'grand_total', 
+    'status',
+    'table_number', 
+    'payment_method', 
+    'note', 
+    'created_at', 
+    'updated_at',
+    ];
     protected $table = 'item.orders';
-    protected $dates = ['deleted_at'];
 
     public function user()
     {

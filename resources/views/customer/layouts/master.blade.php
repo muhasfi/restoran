@@ -1,5 +1,6 @@
 @include('customer.layouts.__header')
 
+
     <body>
 
         <!-- Spinner Start -->
@@ -38,5 +39,6 @@
     <script>
         document.getElementById('currentYear').textContent = new Date().getFullYear();
     </script>
+    @yield('script')
     </body>
 </html>
