@@ -127,7 +127,7 @@ class MenuController extends Controller
             return redirect()->route('menu')->with('error', 'Your cart is empty.');
         }
 
-        $tableNumber = Session::get('table_number');
+        $tableNumber = Session::get('tableNumber');
 
         return view('customer.checkout', compact('cart', 'tableNumber'));
     }
