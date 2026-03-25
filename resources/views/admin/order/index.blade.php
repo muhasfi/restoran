@@ -71,21 +71,7 @@
                                 </span>
                             </td>
                             <td>
-                                @if ($order->status == 'pending' && $order->payment_method == 'tunai')
-                                        <form action="{{ route('orders.updateStatus', $order->id) }}" method="POST">
-                                            @csrf
-                                            <button type="submit" class="btn btn-success btn-sm">
-                                                <i class="bi bi-check-circle"></i> Terima Pembayaran
-                                            </button>
-                                        </form>
-                                    @endif
-                                    <form action="{{ route('orders.updateStatus', $order->id) }}" method="POST">
-                                        @csrf
-                                        <button type="submit" class="btn btn-success btn-sm">
-                                            <i class="bi bi-check-circle"></i> Pesanan Siap
-                                        </button>
-                                    </form>
-                                {{-- @if (Auth::user()->role->role_name == 'admin' || Auth::user()->role->role_name == 'cashier')
+                                @if (Auth::user()->role->role_name == 'admin' || Auth::user()->role->role_name == 'cashier')
                                     @if ($order->status == 'pending' && $order->payment_method == 'tunai')
                                         <form action="{{ route('orders.updateStatus', $order->id) }}" method="POST">
                                             @csrf
@@ -101,7 +87,7 @@
                                             <i class="bi bi-check-circle"></i> Pesanan Siap
                                         </button>
                                     </form>
-                                @endif --}}
+                                @endif
                             </td>
                         </tr>
 

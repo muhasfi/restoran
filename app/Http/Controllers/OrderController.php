@@ -32,16 +32,14 @@ class OrderController extends Controller
     {
         // Fetch the order by ID
         $order = Order::findOrFail($id);
-        $order->status = 'settlement';
-        $order->save();
 
         // Update the order status to 'settled'
-        // if(Auth::user()->role->role_name == 'admin' || Auth::user()->role->role_name == 'cashier') {
-        //     $order->status = 'settlement';
-        // } else {
-        //     $order->status = 'cooked';
-        // }
-        // $order->save();
+        if(Auth::user()->role->role_name == 'admin' || Auth::user()->role->role_name == 'cashier') {
+            $order->status = 'settlement';
+        } else {
+            $order->status = 'cooked';
+        }
+        $order->save();
 
         // Redirect back to the orders index with a success message
         return redirect()->route('orders.index')->with('success', 'Order settled successfully.');
