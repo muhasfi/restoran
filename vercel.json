@@ -12,6 +12,14 @@
             "dest": "/public/build/$1"
         },
         {
+            "src": "/storage/(.*)",
+            "dest": "/public/storage/$1"
+        },
+        {
+            "src": "/assets/(.*)",
+            "dest": "/public/assets/$1"
+        },
+        {
             "src": "/css/(.*)",
             "dest": "/public/css/$1"
         },
@@ -39,7 +47,7 @@
     ],
     "env": {
         "APP_ENV": "production",
-        "APP_DEBUG": "true",
+        "APP_DEBUG": "false",
         "APP_URL": "https://donation-app-drab.vercel.app",
 
         "APP_CONFIG_CACHE": "/tmp/config.php",
