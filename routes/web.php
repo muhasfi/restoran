@@ -1,7 +1,13 @@
 <?php
 
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ItemController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MenuController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\UserController;
 
 Route::get('/', function () {
     return redirect()->route('menu');
@@ -17,3 +23,14 @@ Route::get('/cart/clear', [MenuController::class, 'clearCart'])->name('cart.clea
 Route::get('/checkout', [MenuController::class, 'checkout'])->name('checkout');
 Route::post('/checkout/store', [MenuController::class, 'storeOrder'])->name('checkout.store');
 Route::get('/checkout/success/{orderId}', [MenuController::class, 'checkoutSuccess'])->name('checkout.success');
+
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+Route::resource('categories', CategoryController::class);
+Route::resource('roles', RoleController::class);
+Route::resource('orders', OrderController::class);
+Route::resource('items', ItemController::class);
+Route::resource('users', UserController::class);
+
+ Route::post('items/update-status/{order}', [ItemController::class, 'updateStatus'])->name('items.updateStatus');
+ Route::post('orders/{order}', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
