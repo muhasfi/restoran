@@ -1,63 +1,110 @@
-<div class="container-fluid bg-dark text-white-50 footer pt-5 mt-5">
-            <div class="container py-5">
-                <div class="pb-4 mb-4" style="border-bottom: 1px solid rgba(226, 175, 24, 0.5) ;">
-                    <div class="row g-4">
-                        <div class="col-lg-6">
-                            <a href="#">
-                                <h1 class="text-primary mb-0">Restoranku</h1>
-                                <p class="text-secondary mb-0">Pilihan Lezat di Ujung Jari Anda!</p>
-                            </a>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="d-flex justify-content-end pt-3">
-                                <a class="btn  btn-outline-secondary me-2 btn-md-square rounded-circle" href="https://www.instagram.com/codepolitan/"><i class="fab fa-instagram"></i></a>
-                                <a class="btn  btn-outline-secondary me-2 btn-md-square rounded-circle" href="https://tiktok.com/@codepolitan.com"><i class="fab fa-tiktok"></i></a>
-                                <a class="btn btn-outline-secondary me-2 btn-md-square rounded-circle" href="https://www.youtube.com/@codepolitan"><i class="fab fa-youtube"></i></a>
-                                <a class="btn btn-outline-secondary btn-md-square rounded-circle" href="https://id.linkedin.com/company/codepolitan"><i class="fab fa-linkedin-in"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row g-5">
-                    <div class="col-lg-4 col-md-6">
-                        <div class="footer-item">
-                            <h4 class="text-light mb-3">Mengapa orang suka!</h4>
-                            <p class="mb-4">Kami menghadirkan kemudahan, pilihan menu terbaik, dan layanan cepat yang membuat pengalaman kuliner Anda lebih menyenangkan!</p>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-6">
-                        <div class="footer-item">
-                            <h4 class="text-light mb-3">Hubungi Kami</h4>
-                            <p>Alamat: Jl. Sangkuriang No.8, Padasuka, Kec. Cimahi Tengah, Kota Cimahi, Jawa Barat 40526</p>
-                            <p>Email: info@codepolitan.com</p>
-                            <p>Telp: 0899-9488-990</p>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-6">
-                        <div class="d-flex flex-column text-start footer-item">
-                            <h4 class="text-light mb-3">Metode Pembayaran</h4>
-                            <a class="btn-link" href="">QRIS</a>
-                            <a class="btn-link" href="">Tunai</a>
-                        </div>
-                    </div>
+<footer style="background:var(--footer-bg);margin-top:3rem">
+    <div class="container py-5">
+        <div class="row g-4 pb-4" style="border-bottom:1px solid rgba(255,255,255,.1)">
+            <div class="col-lg-5">
+                <div style="font-size:1.5rem;font-weight:600;color:var(--brand);margin-bottom:.25rem">Restoranku</div>
+                <div style="font-size:.8rem;color:rgba(255,255,255,.5);margin-bottom:1rem">Pilihan Lezat di Ujung Jari Anda!</div>
+                <p style="font-size:.85rem;color:rgba(255,255,255,.6);line-height:1.7">
+                    Kami menghadirkan kemudahan, pilihan menu terbaik, dan layanan cepat yang membuat pengalaman kuliner Anda lebih menyenangkan!
+                </p>
+                <div class="d-flex gap-2 mt-3">
+                    <a href="" class="d-flex align-items-center justify-content-center"
+                       style="width:36px;height:36px;border-radius:50%;border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.6);transition:all .2s"
+                       onmouseover="this.style.borderColor='var(--brand)';this.style.color='var(--brand)'"
+                       onmouseout="this.style.borderColor='rgba(255,255,255,.15)';this.style.color='rgba(255,255,255,.6)'">
+                        <i class="fab fa-instagram" style="font-size:.85rem"></i>
+                    </a>
+                    <a href="" class="d-flex align-items-center justify-content-center"
+                       style="width:36px;height:36px;border-radius:50%;border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.6);transition:all .2s"
+                       onmouseover="this.style.borderColor='var(--brand)';this.style.color='var(--brand)'"
+                       onmouseout="this.style.borderColor='rgba(255,255,255,.15)';this.style.color='rgba(255,255,255,.6)'">
+                        <i class="fab fa-tiktok" style="font-size:.85rem"></i>
+                    </a>
+                    <a href="" class="d-flex align-items-center justify-content-center"
+                       style="width:36px;height:36px;border-radius:50%;border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.6);transition:all .2s"
+                       onmouseover="this.style.borderColor='var(--brand)';this.style.color='var(--brand)'"
+                       onmouseout="this.style.borderColor='rgba(255,255,255,.15)';this.style.color='rgba(255,255,255,.6)'">
+                        <i class="fab fa-youtube" style="font-size:.85rem"></i>
+                    </a>
                 </div>
             </div>
-        </div>
+            <div class="col-lg-4">
+                <div style="font-size:.9rem;font-weight:600;color:rgba(255,255,255,.85);margin-bottom:1rem">
+                    Hubungi Kami
+                </div>
 
-        <!-- Copyright Start -->
-        <div class="container-fluid copyright bg-dark py-4">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
-                        <span class="text-light"><a href="#"><i class="fas fa-copyright text-light me-2"></i>Restoranku</a> <span id="currentYear"></span>. All right reserved.</span>
+                <div class="d-flex flex-column gap-2" style="font-size:.82rem;color:rgba(255,255,255,.55)">
+                    
+                    <!-- Alamat -->
+                    <div class="d-flex gap-2">
+                        <i class="fas fa-map-marker-alt mt-1" style="color:var(--brand);width:14px;flex-shrink:0"></i>
+                        <span>Tegalsari, Laweyan Tengah, Kota Surakarta, Jawa Tengah</span>
                     </div>
-                    <div class="col-md-6 my-auto text-center text-md-end text-white">
-                        <!--/*** This template is free as long as you keep the below author’s credit link/attribution link/backlink. ***/-->
-                        <!--/*** If you'd like to use the template without the below author’s credit link/attribution link/backlink, ***/-->
-                        <!--/*** you can purchase the Credit Removal License from "https://htmlcodex.com/credit-removal". ***/-->
-                        Designed By <a class="border-bottom" href="https://htmlcodex.com">HTML Codex</a> Distributed By <a class="border-bottom" href="https://themewagon.com">ThemeWagon</a>
+
+                    <!-- Email (klik buka email) -->
+                    <div class="d-flex gap-2 align-items-center">
+                        <i class="fas fa-envelope" style="color:var(--brand);width:14px"></i>
+                        <a href="mailto:info@restoku.id" style="color:inherit;text-decoration:none;">
+                            info@restoku.id
+                        </a>
+                    </div>
+
+                    <!-- Telepon (klik langsung nelpon) -->
+                    <div class="d-flex gap-2 align-items-center">
+                        <i class="fas fa-phone" style="color:var(--brand);width:14px"></i>
+                        <a href="tel:+12345678" style="color:inherit;text-decoration:none;">
+                            +62 123-4567-890
+                        </a>
+                    </div>
+
+                    <!-- WhatsApp (klik langsung chat) -->
+                    <div class="d-flex gap-2 align-items-center">
+                        <i class="fab fa-whatsapp" style="color:var(--brand);width:14px"></i>
+                        <a href="https://wa.me/12345678" target="_blank" style="color:inherit;text-decoration:none;">
+                            Chat WhatsApp
+                        </a>
+                    </div>
+
+                    <!-- Jam Operasional -->
+                    <div class="d-flex gap-2">
+                        <i class="fas fa-clock mt-1" style="color:var(--brand);width:14px;flex-shrink:0"></i>
+                        <span>Senin - Minggu, 10:00 - 22:00</span>
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-lg-3">
+                <div style="font-size:.9rem;font-weight:600;color:rgba(255,255,255,.85);margin-bottom:1rem">Metode Pembayaran</div>
+                <div class="d-flex flex-column gap-2">
+                    <div class="d-flex align-items-center gap-2"
+                         style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:8px 12px">
+                        <i class="fas fa-qrcode" style="color:var(--brand);font-size:.9rem"></i>
+                        <span style="font-size:.82rem;color:rgba(255,255,255,.7)">QRIS</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-2"
+                         style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:8px 12px">
+                        <i class="fas fa-money-bill-wave" style="color:var(--brand);font-size:.9rem"></i>
+                        <span style="font-size:.82rem;color:rgba(255,255,255,.7)">Tunai</span>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- Copyright End -->
+    </div>
+    <div style="border-top:1px solid rgba(255,255,255,.06);padding:1rem 0">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6 text-center text-md-start mb-2 mb-md-0">
+                    <span style="font-size:.78rem;color:rgba(255,255,255,.4)">
+                        <i class="fas fa-copyright me-1"></i>Restoranku <span id="currentYear"></span>. All rights reserved.
+                    </span>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <span style="font-size:.78rem;color:rgba(255,255,255,.35)">
+                        Designed By <a href="https://htmlcodex.com" style="color:rgba(255,255,255,.5)">HTML Codex</a>
+                        · Distributed By <a href="https://themewagon.com" style="color:rgba(255,255,255,.5)">ThemeWagon</a>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>

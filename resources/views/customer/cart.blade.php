@@ -1,188 +1,149 @@
 @extends('customer.layouts.master')
 
 @section('content')
-    <div class="container-fluid py-5">
-            <div class="container py-5">
-                @if (session('success'))
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        {{ session('success') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                @endif
+<div class="container py-4">
 
-                @if(empty($cart))
-                <h4 class="text-center">Keranjang Anda kosong</h4>
-                @else
-
-                <div class="table-responsive">
-                    <table class="table">
-                        <thead>
-                          <tr>
-                            <th scope="col">Gambar</th>
-                            <th scope="col">Menu</th>
-                            <th scope="col">Harga</th>
-                            <th scope="col">Jumlah</th>
-                            <th scope="col">Total</th>
-                            <th scope="col">Aksi</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                            @php
-                                $subtotal = 0;
-                            @endphp
-
-                            @foreach ($cart as $item)
-                            {{-- {{ dd($cart) }} --}}
-
-                            @php
-                                $itemTotal = $item['price'] * $item['qty'];
-                                $subtotal += $itemTotal;
-                            @endphp
-                            
-
-                            <tr>
-                                <th scope="row">
-                                    <div class="d-flex align-items-center">
-                                        <img src="{{ asset('img_item_upload/' . $item['image']) }}" class="img-fluid rounded" style="width: 80px; height: 80px; object-fit: cover;" alt="" onerror="this.onerror=null;this.src='{{ $item['image'] }}';">
-                                    </div>
-                                </th>
-                                <td>
-                                    <h5 class="mb-0 mt-4">{{ $item['name'] }}</h5>
-                                </td>
-                                <td>
-                                    <p class="mb-0 mt-4">Rp{{ number_format($item['price'], 0, ',', '.') }}</p>
-                                </td>
-                                <td>
-                                    <div class="input-group quantity mt-4" style="width: 100px;">
-                                        <div class="input-group-btn">
-                                            <button class="btn btn-sm btn-minus rounded-circle bg-light border" onclick="updateQuantity('{{ $item['id'] }}', -1)">
-                                            <i class="fa fa-minus"></i>
-                                            </button>
-                                        </div>
-                                        <input id="qty-{{ $item['id'] }}" type="text" class="form-control form-control-sm text-center border-0 bg-transparent" value="{{ $item['qty'] }}" readonly>
-                                        <div class="input-group-btn">
-                                            <button class="btn btn-sm btn-plus rounded-circle bg-light border" onclick="updateQuantity('{{ $item['id'] }}', 1)">
-                                                <i class="fa fa-plus"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    {{-- <p class="mb-0 mt-4">Rp{{ number_format($itemTotal, 0, ',', '.') }}</p> --}}
-                                    <p class="mb-0 mt-4">{{ 'Rp'. number_format($item['price'] * $item['qty'], 0, ',','.') }}</p>
-                                </td>
-                                <td>
-                                    <button class="btn btn-md rounded-circle bg-light border mt-4" >
-                                        <i class="fa fa-times text-danger" onclick="if (confirm('Are you sure you want to remove this item?')) { removeItemFromCart('{{ $item['id'] }}'); }"></i>
-                                    </button>
-                                </td>
-                            
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-                @php
-                    $tax = $subtotal * 0.1;
-                    $total = $subtotal + $tax;
-                @endphp
-
-                <div class="d-flex justify-content-end">
-                    <a href="{{ route('cart.clear') }}" class="btn btn-danger" onclick="return confirm('Are you sure you want to clear the cart?')">Clear Cart</a>
-                </div>
-
-                <div class="row g-4 justify-content-end mt-1">
-                    <div class="col-8"></div>
-                    <div class="col-sm-8 col-md-7 col-lg-6 col-xl-4">
-                        <div class="bg-light rounded">
-                            <div class="p-4">
-                                <h2 class="display-6 mb-4">Total <span class="fw-normal">Pesanan</span></h2>
-                                <div class="d-flex justify-content-between mb-4">
-                                    <h5 class="mb-0 me-4">Subtotal</h5>
-                                    <p class="mb-0">Rp {{ number_format($subtotal, 0, ',', '.') }}</p>
-                                </div>
-                                <div class="d-flex justify-content-between">
-                                    <p class="mb-0 me-4">Pajak (10%)</p>
-                                    <div class="">
-                                        <p class="mb-0">Rp {{ number_format($tax, 0, ',', '.') }}</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="py-4 mb-4 border-top d-flex justify-content-between">
-                                <h4 class="mb-0 ps-4 me-4">Total</h4>
-                                <h5 class="mb-0 pe-4">Rp {{ number_format($total, 0, ',', '.') }}</h5>
-                            </div>
-                            
-                        </div>
-                        <div class="d-flex justify-content-end">
-                            <div class="mb-0 mb-3">
-                                <a href="{{ route('checkout') }}" class="btn border-secondary py-3 text-primary text-uppercase mb-4" type="button">Lanjut ke Pembayaran</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                @endif
-            </div>
+    {{-- Alert success --}}
+    @if(session('success'))
+        <div class="rk-alert-success rk-animate">
+            <span><i class="fas fa-check-circle me-2"></i>{{ session('success') }}</span>
+            <button onclick="this.parentElement.remove()" style="background:none;border:none;cursor:pointer;color:#065f46;font-size:1rem">&times;</button>
         </div>
+    @endif
+
+    @if(empty($cart))
+        {{-- Empty State --}}
+        <div class="rk-empty rk-animate" style="padding:4rem 1rem">
+            <div style="font-size:3.5rem;margin-bottom:1rem;opacity:.4">
+                <i class="fas fa-shopping-bag"></i>
+            </div>
+            <div style="font-size:1rem;font-weight:600;color:var(--text-primary);margin-bottom:.5rem">Keranjang Anda kosong</div>
+            <div style="font-size:.85rem;color:var(--text-secondary);margin-bottom:1.5rem">Yuk pilih menu yang kamu suka!</div>
+            <a href="{{ route('menu') }}" class="rk-cta" style="max-width:200px;margin:0 auto;padding:12px 24px">
+                <i class="fas fa-utensils me-2"></i> Lihat Menu
+            </a>
+        </div>
+
+    @else
+        <div class="row g-4">
+
+            {{-- Cart Items --}}
+            <div class="col-lg-8">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <div class="rk-section-title" style="margin-bottom:0">
+                        Keranjang <span style="font-weight:400;color:var(--text-secondary)">({{ count($cart) }} item)</span>
+                    </div>
+                    <a href="{{ route('cart.clear') }}"
+                       onclick="return confirm('Hapus semua item dari keranjang?')"
+                       style="font-size:.8rem;color:#e24b4a;text-decoration:none;display:flex;align-items:center;gap:4px">
+                        <i class="fas fa-trash-alt" style="font-size:.75rem"></i> Hapus Semua
+                    </a>
+                </div>
+
+                @foreach($cart as $item)
+                    @php $itemTotal = $item['price'] * $item['qty']; @endphp
+                    <div class="rk-cart-item rk-animate" id="cart-row-{{ $item['id'] }}">
+                        <div class="rk-cart-thumb">
+                            <img src="{{ asset('img_item_upload/' . $item['image']) }}"
+                                 alt="{{ $item['name'] }}"
+                                 onerror="this.onerror=null;this.src='{{ $item['image'] }}'">
+                        </div>
+                        <div class="rk-ci-info">
+                            <div class="rk-ci-name">{{ $item['name'] }}</div>
+                            <div class="rk-ci-price">Rp{{ number_format($item['price'], 0, ',', '.') }} / porsi</div>
+                        </div>
+                        <div class="rk-qty-ctrl">
+                            <button class="rk-qty-btn" onclick="updateQuantity('{{ $item['id'] }}', -1)">−</button>
+                            <span class="rk-qty-val" id="qty-{{ $item['id'] }}">{{ $item['qty'] }}</span>
+                            <button class="rk-qty-btn" onclick="updateQuantity('{{ $item['id'] }}', 1)">+</button>
+                        </div>
+                        <div class="rk-ci-total" id="total-{{ $item['id'] }}">
+                            Rp{{ number_format($itemTotal, 0, ',', '.') }}
+                        </div>
+                        <button class="rk-remove-btn" onclick="if(confirm('Hapus item ini?')) removeItemFromCart('{{ $item['id'] }}')" title="Hapus">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                @endforeach
+            </div>
+
+            {{-- Order Summary --}}
+            @php
+                $subtotal = array_sum(array_map(fn($i) => $i['price'] * $i['qty'], $cart));
+                $tax      = $subtotal * 0.1;
+                $total    = $subtotal + $tax;
+            @endphp
+            <div class="col-lg-4">
+                <div class="rk-card rk-animate rk-animate-d1" style="position:sticky;top:80px">
+                    <div class="rk-section-title">Ringkasan Pesanan</div>
+                    <div class="rk-summary mb-3">
+                        <div class="rk-summary-row">
+                            <span>Subtotal</span>
+                            <span>Rp{{ number_format($subtotal, 0, ',', '.') }}</span>
+                        </div>
+                        <div class="rk-summary-row">
+                            <span>Pajak (10%)</span>
+                            <span>Rp{{ number_format($tax, 0, ',', '.') }}</span>
+                        </div>
+                        <div class="rk-summary-total">
+                            <span>Total</span>
+                            <span style="color:var(--brand)">Rp{{ number_format($total, 0, ',', '.') }}</span>
+                        </div>
+                    </div>
+                    <a href="{{ route('checkout') }}" class="rk-cta">
+                        Lanjut ke Pembayaran <i class="fas fa-arrow-right ms-2" style="font-size:.8rem"></i>
+                    </a>
+                    <a href="{{ route('menu') }}" class="d-block text-center mt-3"
+                       style="font-size:.82rem;color:var(--text-secondary);text-decoration:none">
+                        <i class="fas fa-arrow-left me-1" style="font-size:.75rem"></i> Tambah menu lain
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    @endif
+</div>
 @endsection
 
 @section('script')
 <script>
     function updateQuantity(itemId, change) {
-        var qtyInput = document.getElementById('qty-' + itemId);
-        var currentQty = parseInt(qtyInput.value);
-        var newQty = currentQty + change;
+        const qtyEl = document.getElementById('qty-' + itemId);
+        const currentQty = parseInt(qtyEl.textContent);
+        const newQty = currentQty + change;
 
         if (newQty <= 0) {
-            if (confirm('Are you sure you want to remove this item?')) {
+            if (confirm('Hapus item ini dari keranjang?')) {
                 removeItemFromCart(itemId);
             }
             return;
         }
+
         fetch("{{ route('cart.update') }}", {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
             body: JSON.stringify({ id: itemId, qty: newQty })
         })
-        .then(response => response.json())
-          .then(data => {
-              if (data.success) {
-                  qtyInput.value = newQty;
-                  location.reload();
-              } else {
-                  alert(data.message);
-              }
-          })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('terjadi kesalahan. Silakan coba lagi.');
-            });
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) location.reload();
+            else alert(data.message);
+        })
+        .catch(() => alert('Terjadi kesalahan. Silakan coba lagi.'));
     }
 
     function removeItemFromCart(itemId) {
         fetch("{{ route('cart.remove') }}", {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
             body: JSON.stringify({ id: itemId })
         })
-        .then(response => response.json())
-          .then(data => {
-              if (data.success) {
-                  location.reload();
-              } else {
-                  alert(data.message);
-              }
-          })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('terjadi kesalahan. Silakan coba lagi.');
-            });
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) location.reload();
+            else alert(data.message);
+        })
+        .catch(() => alert('Terjadi kesalahan. Silakan coba lagi.'));
     }
 </script>
 @endsection
