@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container py-5">
-    <div class="rk-receipt rk-animate">
+    <div id="receipt" class="rk-receipt rk-animate">
 
         {{-- Success Icon --}}
         <div class="rk-success-icon">
@@ -81,9 +81,33 @@
             @endif
         </div>
 
-        <a href="{{ route('menu') }}" class="rk-cta">
-            <i class="fas fa-utensils me-2" style="font-size:.8rem"></i> Kembali ke Menu
-        </a>
+        <div style="display:flex;gap:10px;margin-top:15px;flex-wrap:wrap;">
+
+            <button onclick="downloadReceipt()" class="rk-cta" style="flex:1;min-width:180px;">
+                <i class="fas fa-download me-2"></i> Download Struk
+            </button>
+
+            <a href="{{ route('menu') }}" class="rk-cta" style="flex:1;min-width:180px;text-align:center;">
+                <i class="fas fa-utensils me-2" style="font-size:.8rem"></i> Kembali ke Menu
+            </a>
+
+        </div>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script>
+function downloadReceipt() {
+    const element = document.getElementById('receipt');
+
+    html2canvas(element, {
+        scale: 2 // biar HD
+    }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = 'struk.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+    });
+}
+</script>
 @endsection

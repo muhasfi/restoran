@@ -755,6 +755,10 @@
             color: var(--text-primary);
             padding-top: 10px;
         }
+        #receipt {
+            background: white;
+            padding: 20px;
+        }
 
         /* ===== STATUS BADGE ===== */
         .rk-status-badge {
