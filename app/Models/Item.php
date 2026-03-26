@@ -9,7 +9,17 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Item extends Model
 {
     use SoftDeletes, HasFactory;
-    protected $fillable = ['name', 'description', 'price', 'category_id', 'img', 'is_active', 'created_at', 'updated_at', 'deleted_at'];
+    protected $fillable = ['name', 
+    'description', 
+    'price', 
+    'category_id', 
+    'img',
+    'img_public_id',
+    'is_active', 
+    'created_at', 
+    'updated_at', 
+    'deleted_at'
+    ];
     protected $table = 'item.items';
     protected $dates = ['deleted_at'];
 

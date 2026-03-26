@@ -18,6 +18,7 @@ return new class extends Migration
             $table->integer('price');
             $table->unsignedBigInteger('category_id');
             $table->string('img')->nullable();
+            $table->string('img_public_id')->nullable();
             $table->boolean('is_active')->default(true);
             $table->softDeletes();
             $table->timestamps();

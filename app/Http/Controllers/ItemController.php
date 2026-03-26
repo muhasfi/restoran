@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Item;
+use Cloudinary\Cloudinary;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -30,6 +31,27 @@ class ItemController extends Controller
 
         // Return the view to create a new item
         return view('admin.item.create', compact('categories'));
+    }
+
+    private function uploadToCloudinary($file): array
+    {
+        $cloudinary = new Cloudinary(config('cloudinary.cloud_url'));
+        $result = $cloudinary->uploadApi()->upload($file->getRealPath(), [
+            'folder' => 'img_item_upload',
+        ]);
+
+        return [
+            'img'           => $result['secure_url'],
+            'img_public_id' => $result['public_id'],
+        ];
+    }
+
+    private function deleteFromCloudinary(?string $publicId): void
+    {
+        if ($publicId) {
+            $cloudinary = new Cloudinary(config('cloudinary.cloud_url'));
+            $cloudinary->uploadApi()->destroy($publicId);
+        }
     }
 
     /**
@@ -60,18 +82,12 @@ class ItemController extends Controller
             'is_active.boolean' => 'The active status must be true or false.',
         ]);
 
-
-        // Handle image upload if provided
         if ($request->hasFile('img')) {
-            $image = $request->file('img');
-            $imageName = time().'.'. $image->getClientOriginalExtension();
-            $image->move(public_path('img_item_upload'), $imageName);
-            $validatedData['img'] = $imageName;
+            $validatedData = array_merge($validatedData, $this->uploadToCloudinary($request->file('img')));
         }
 
         $item = Item::create($validatedData);
 
-        // Redirect to the items index with a success message
         return redirect()->route('items.index')->with('success', 'Item created successfully.');
     }
 
@@ -100,7 +116,6 @@ class ItemController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        // Validate the request data
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -111,8 +126,7 @@ class ItemController extends Controller
             ],
             'img' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048',
             'is_active' => 'required|boolean',
-        ],
-        [
+        ], [
             'name.required' => 'The item name is required.',
             'description.string' => 'The description must be a string.',
             'price.required' => 'The price is required.',
@@ -123,19 +137,16 @@ class ItemController extends Controller
             'is_active.boolean' => 'The active status must be true or false.',
         ]);
 
-        // Handle image upload if provided
-        if ($request->hasFile('img')) {
-            $image = $request->file('img');
-            $imageName = time().'.'. $image->getClientOriginalExtension();
-            $image->move(public_path('img_item_upload'), $imageName);
-            $validatedData['img'] = $imageName;
+        $item = Item::findOrFail($id);
+
+        // Handle image upload ke Cloudinary
+       if ($request->hasFile('img')) {
+            $this->deleteFromCloudinary($item->img_public_id);
+            $validatedData = array_merge($validatedData, $this->uploadToCloudinary($request->file('img')));
         }
 
-        // Find the item and update it
-        $item = Item::findOrFail($id);
         $item->update($validatedData);
 
-        // Redirect to the items index with a success message
         return redirect()->route('items.index')->with('success', 'Item updated successfully.');
     }
 
