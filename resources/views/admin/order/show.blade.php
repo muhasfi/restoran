@@ -72,7 +72,12 @@
 
                             <td>{{ $loop->iteration }}</td>
                             <td>
-                                <img src="{{ asset('img_item_upload/'. $menu->item->img) }}" width="60" class="img-fluid rounded-top" alt="" onerror="this.onerror=null;this.src='{{  $menu->item->img }}';">
+                                <img 
+                                    src="{{ $menu->item->img ?? asset('default.png') }}" 
+                                    width="60" 
+                                    class="img-fluid rounded-top" 
+                                    alt=""
+                                >
                             </td>
                             <td>{{ $menu->item->name }}</td>
                             <td>{{ $menu->quantity }}</td>
