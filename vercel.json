@@ -48,7 +48,7 @@
     "env": {
         "APP_ENV": "production",
         "APP_DEBUG": "false",
-        "APP_URL": "https://donation-app-drab.vercel.app",
+        "APP_URL": "https://restoran-git-main-muhasfis-projects.vercel.app/",
 
         "APP_CONFIG_CACHE": "/tmp/config.php",
         "APP_EVENTS_CACHE": "/tmp/events.php",

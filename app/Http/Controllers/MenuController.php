@@ -176,9 +176,9 @@ class MenuController extends Controller
         $order = Order::create([
             'order_code' => 'ORD-'.$tableNumber.'-'. time(),
             'user_id' => $user->id,
-            'subtotal' => $totalAmount,
-            'tax' => 0.1 * $totalAmount,
-            'grand_total' => $totalAmount + (0.1 * $totalAmount),
+            'subtotal' => (int) $totalAmount,
+            'tax' => (int) round(0.1 * $totalAmount),
+            'grand_total' => (int) round($totalAmount + (0.1 * $totalAmount)),
             'status' => 'pending',
             'table_number' => $tableNumber,
             'payment_method' => $request->payment_method,
@@ -190,9 +190,9 @@ class MenuController extends Controller
                 'order_id' => $order->id,
                 'item_id' => $item['id'],
                 'quantity' => $item['qty'],
-                'price' => $item['price'] * $item['qty'],
-                'tax' => 0.1 * $item['price'] * $item['qty'],
-                'total_price' => ($item['price'] * $item['qty']) + (0.1 * $item['price'] * $item['qty']),
+                'price' => (int) ($item['price'] * $item['qty']),
+                'tax' => (int) round(0.1 * $item['price'] * $item['qty']),
+                'total_price' => (int) round(($item['price'] * $item['qty']) + (0.1 * $item['price'] * $item['qty'])),
             ]);
         }
 
