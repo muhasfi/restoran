@@ -1007,6 +1007,44 @@
         font-size: .85rem;
     }
     .wn-remove-btn:hover { background: rgba(192,57,43,0.1); }
+    @media (max-width: 480px) {
+        .wn-cart-item {
+            gap: 10px;
+            padding: 10px;
+        }
+
+        .wn-cart-thumb {
+            width: 48px;
+            height: 48px;
+        }
+
+        .wn-qty-ctrl {
+            gap: 4px;
+        }
+
+        .wn-qty-btn {
+            width: 26px;
+            height: 26px;
+            font-size: .85rem;
+        }
+
+        .wn-ci-total {
+            min-width: 70px;
+            font-size: .8rem;
+        }
+
+        .wn-ci-name {
+            font-size: .8rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .wn-ci-price {
+            font-size: .7rem;
+        }
+    }
+    
 
     /* ============================================================
        FORM FIELDS
@@ -1280,7 +1318,7 @@
         .wn-sidebar { display: none; }
         .wn-mobile-hero { display: block; }
         .wn-bottom-nav { display: block; }
-        body { padding-bottom: 60px; }
+        /* body { padding-bottom: 60px; } */
         .wn-back-top { bottom: 80px; }
         #wn-toast { bottom: 90px; }
         .wn-cart-fab { bottom: 76px; }

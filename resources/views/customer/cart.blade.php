@@ -17,10 +17,10 @@
         $cartCount = count($cart ?? []);
         $tableNum  = session('table_number');
     @endphp
-    <div class="wn-page-subtitle">
+    {{-- <div class="wn-page-subtitle">
         {{ $cartCount }} item
         @if($tableNum) · <i class="fas fa-utensils" style="font-size:.75rem;color:var(--amber)"></i> Meja {{ $tableNum }} @endif
-    </div>
+    </div> --}}
 </div>
 <div id="wn-alert" class="wn-alert-overlay">
   <div class="wn-alert-box">
@@ -66,12 +66,13 @@
 
 @else
     {{-- ======== CART LAYOUT ======== --}}
-    <div style="display:grid; grid-template-columns:1fr; gap:24px;">
+<div id="cart-wrapper">
+    <div id="cart-grid">
 
         {{-- ====== CART ITEMS ====== --}}
         <div>
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-                <div style="font-size:.875rem;font-weight:600;color:var(--text-secondary)">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;overflow:hidden;">
+                <div id="cart-count-label" style="font-size:.875rem;font-weight:600;color:var(--text-secondary)">
                     {{ count($cart) }} item dalam keranjang
                 </div>
                 <a href="#"
@@ -132,7 +133,7 @@
             $total    = $subtotal + $tax;
         @endphp
         <div>
-            <div class="wn-card wn-animate wn-d1" style="position:sticky;top:88px">
+            <div class="wn-card wn-animate wn-d1" style="position:sticky;top:88px;margin-right:10px;">
 
                 {{-- Card header --}}
                 <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">
@@ -177,7 +178,16 @@
         </div>
 
     </div>
+</div>
 @endif
+<div id="empty-state" style="display:none; padding:5rem 1rem" class="wn-empty wn-animate">
+    <div class="wn-empty-icon">🛒</div>
+    <div style="font-size:1rem;font-weight:600;color:var(--text-primary);margin-bottom:8px">Keranjang kamu kosong</div>
+    <div style="font-size:.85rem;color:var(--text-secondary);margin-bottom:24px">Yuk pilih menu favorit dulu!</div>
+    <a href="{{ route('menu') }}" class="wn-cta" style="max-width:200px;margin:0 auto;display:block">
+        <i class="fas fa-utensils" style="margin-right:8px;font-size:.8rem"></i> Lihat Menu
+    </a>
+</div>
 
 @endsection
 
@@ -279,21 +289,33 @@
 
     // ✅ hitung ulang tanpa backend
     function updateSummary() {
-        let subtotal = 0;
+        const items = document.querySelectorAll('.wn-cart-item');
 
-        document.querySelectorAll('.wn-cart-item').forEach(item => {
+        // ✅ Cek apakah cart kosong
+        if (items.length === 0) {
+            document.getElementById('cart-wrapper').style.display = 'none';
+            document.getElementById('empty-state').style.display = 'block';
+            return;
+        }
+
+        document.getElementById('cart-count-label').textContent = items.length + ' item dalam keranjang';
+
+        // ✅ Update subtotal di ringkasan juga
+        const summaryCount = document.querySelector('#subtotal')?.closest('.wn-summary-row')?.querySelector('span:first-child');
+        if (summaryCount) summaryCount.textContent = `Subtotal (${items.length} item)`;
+
+
+        let subtotal = 0;
+        items.forEach(item => {
             const priceText = item.querySelector('.wn-ci-price').textContent;
             const price = parseInt(priceText.replace(/\D/g, ''));
-
             const qty = parseInt(item.querySelector('.wn-qty-val').textContent);
-
             subtotal += price * qty;
         });
 
-        const tax = Math.round((subtotal) * 0.11);
+        const tax = Math.round(subtotal * 0.11);
         const total = subtotal + tax;
 
-        // ⚠️ pastikan ID ini ADA di HTML kamu
         document.getElementById('subtotal').textContent = formatRupiah(subtotal);
         document.getElementById('tax').textContent = formatRupiah(tax);
         document.getElementById('grand-total').textContent = formatRupiah(total);
@@ -305,17 +327,40 @@
         return 'Rp' + angka.toLocaleString('id-ID');
     }
 </script>
-@endsection
 
 <style>
+    #cart-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 24px;
+    }
+
     @media (min-width: 768px) {
-        .wn-main > div > div:first-child > div[style*="grid-template-columns:1fr"] {
-            grid-template-columns: 1fr 380px !important;
+        #cart-grid {
+            grid-template-columns: 1fr 360px;
         }
     }
 
-    /* Override grid untuk cart page */
-    @media (min-width: 768px) {
-        #cart-grid { grid-template-columns: 1fr 360px; }
+    @media (max-width: 767px) {
+        .wn-card.wn-animate.wn-d1 {
+            position: static !important;
+        }
+    }
+    @media (max-width: 767px) {
+        .wn-card.wn-animate.wn-d1 {
+            position: static !important;
+        }
+        
+        /* Kurangi padding konten di mobile */
+        .wn-main > div {
+            padding: 16px !important;
+        }
+    }
+    @media (max-width: 767px) {
+        .wn-cart-item {
+            margin-left: -9px;
+        }
     }
 </style>
+@endsection
+

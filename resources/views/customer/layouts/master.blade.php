@@ -100,7 +100,7 @@
         </div>
 
         {{-- Page content --}}
-        <div style="flex:1; padding: 24px; max-width: 1200px; width: 100%; margin: 0 auto;">
+        <div style="flex:1; padding: 24px; max-width: 1200px; width: 100%; margin: 0 auto; box-sizing: border-box;">
             @yield('content')
         </div>
 
