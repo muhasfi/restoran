@@ -52,7 +52,7 @@
 
                             <td>{{ $loop->iteration }}</td>
                             <td>{{ $order->order_code }}</td>
-                            <td>{{ $order->user->fullname }}</td>
+                            <td>{{ $order->customer_name }}</td>
                             <td>{{ 'Rp'. number_format($order->grand_total, 0, ',', '.') }}</td>
                             <td>
                                 <span class="badge {{ $order->status == 'settlement' ? 'bg-success' : ($order->status == 'pending' ? 'bg-warning' : ($order->status == 'cooked' ? 'bg-primary' : 'bg-danger')) }}">

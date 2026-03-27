@@ -1,114 +1,137 @@
 @extends('customer.layouts.master')
 
 @section('content')
-<div class="container py-4">
 
-    {{-- Filter Bar --}}
-    <div class="rk-filter-bar">
-        <div class="rk-chip active" data-filter="all">Semua</div>
-        <div class="rk-chip" data-filter="Makanan">
-            <i class="fas fa-utensils me-1" style="font-size:.7rem"></i> Makanan
-        </div>
-        <div class="rk-chip" data-filter="Minuman">
-            <i class="fas fa-glass-whiskey me-1" style="font-size:.7rem"></i> Minuman
-        </div>
+{{-- ============================================================
+     PAGE HEADER
+     ============================================================ --}}
+<div style="margin-bottom: 4px;" class="wn-animate">
+    <div class="wn-page-title">Menu Kami</div>
+    <div class="wn-page-subtitle">Pilih menu favoritmu, lalu tambahkan ke keranjang 🍽</div>
+</div>
+
+{{-- ============================================================
+     FILTER CHIPS (mobile & desktop top bar)
+     ============================================================ --}}
+<div class="wn-filter-bar wn-animate wn-d1">
+    <div class="wn-chip active" data-filter="all">
+        <i class="fas fa-border-all" style="font-size:.7rem;margin-right:4px"></i> Semua
     </div>
+    <div class="wn-chip" data-filter="Makanan">
+        <i class="fas fa-utensils" style="font-size:.7rem;margin-right:4px"></i> Makanan
+    </div>
+    <div class="wn-chip" data-filter="Minuman">
+        <i class="fas fa-glass-whiskey" style="font-size:.7rem;margin-right:4px"></i> Minuman
+    </div>
+</div>
 
-    {{-- ========== MOBILE VIEW (< md) ========== --}}
-    <div class="d-md-none">
-        @php
-            $grouped = $items->groupBy(fn($item) => $item->category->category_name);
-        @endphp
+@php
+    $grouped = $items->groupBy(fn($item) => $item->category->category_name);
+@endphp
 
-        @foreach($grouped as $catName => $catItems)
-            <div class="rk-menu-section" data-cat="{{ $catName }}">
-                <div class="rk-cat-label">
-                    @if($catName === 'Makanan')
-                        <i class="fas fa-utensils me-1" style="color:var(--brand)"></i>
-                    @elseif($catName === 'Minuman')
-                        <i class="fas fa-glass-whiskey me-1" style="color:var(--brand)"></i>
-                    @endif
-                    {{ $catName }}
-                </div>
+@if($items->isEmpty())
+    {{-- EMPTY STATE --}}
+    <div class="wn-empty wn-animate">
+        <div class="wn-empty-icon"><i class="fas fa-utensils"></i></div>
+        <div style="font-size:.95rem;font-weight:600;color:var(--text-primary);margin-bottom:6px">Menu belum tersedia</div>
+        <div style="font-size:.82rem">Silakan cek kembali nanti</div>
+    </div>
+@else
 
-                @foreach($catItems as $item)
-                    <div class="rk-menu-row rk-animate" data-cat="{{ $catName }}">
-                        <div class="row-thumb">
-                            <img src="{{ $item->img }}"
-                                 alt="{{ $item->name }}"
-                                 onerror="this.onerror=null;this.src='https://via.placeholder.com/70x70?text=No+Img'">
-                        </div>
-                        <div class="row-info">
-                            <div class="row-name">{{ $item->name }}</div>
-                            <div class="row-desc">{{ $item->description }}</div>
-                            <div class="row-price">Rp{{ number_format($item->price, 0, ',', '.') }}</div>
-                        </div>
-                        <button class="rk-add-btn-round" onclick="addToCart({{ $item->id }})" aria-label="Tambah ke keranjang">+</button>
-                    </div>
-                @endforeach
+{{-- ============================================================
+     MOBILE VIEW (< 1024px) — horizontal list rows
+     ============================================================ --}}
+<div class="wn-d-desktop-none">
+    @foreach($grouped as $catName => $catItems)
+        <div class="wn-menu-section" data-cat="{{ $catName }}">
+            <div class="wn-cat-label">
+                @if($catName === 'Makanan') 🍜 @elseif($catName === 'Minuman') 🥤 @endif
+                {{ $catName }}
             </div>
-        @endforeach
-    </div>
-
-    {{-- ========== DESKTOP VIEW (>= md) ========== --}}
-    <div class="d-none d-md-block">
-        @foreach($grouped as $catName => $catItems)
-            <div class="rk-menu-section" data-cat="{{ $catName }}">
-                <div class="rk-cat-label">
-                    @if($catName === 'Makanan')
-                        <i class="fas fa-utensils me-1" style="color:var(--brand)"></i>
-                    @elseif($catName === 'Minuman')
-                        <i class="fas fa-glass-whiskey me-1" style="color:var(--brand)"></i>
-                    @endif
-                    {{ $catName }}
+            @foreach($catItems as $item)
+                <div class="wn-menu-row wn-animate" data-cat="{{ $catName }}">
+                    <div class="wn-row-thumb">
+                        <img src="{{ $item->img }}"
+                             alt="{{ $item->name }}"
+                             onerror="this.onerror=null;this.src='https://via.placeholder.com/72x72/FDE8C4/8B6340?text=🍜'">
+                    </div>
+                    <div class="wn-row-info">
+                        <div class="wn-row-name">{{ $item->name }}</div>
+                        <div class="wn-row-desc">{{ $item->description }}</div>
+                        <div class="wn-row-price">Rp{{ number_format($item->price, 0, ',', '.') }}</div>
+                    </div>
+                    <button class="wn-add-btn-round" onclick="addToCart({{ $item->id }})" aria-label="Tambah">+</button>
                 </div>
-                <div class="row g-3 mb-2">
-                    @foreach($catItems as $i => $item)
-                        <div class="col-sm-6 col-lg-4 col-xl-3 rk-animate" style="animation-delay:{{ $i * 0.05 }}s" data-cat="{{ $catName }}">
-                            <div class="rk-menu-card h-100">
-                                <div class="card-img-wrap">
-                                    <img src="{{ $item->img }}"
-                                         alt="{{ $item->name }}"
-                                         onerror="this.onerror=null;this.src='https://via.placeholder.com/300x160?text=No+Img'">
-                                    <span class="position-absolute top-0 start-0 m-2
-                                        @if($catName === 'Makanan') rk-badge-mk
-                                        @elseif($catName === 'Minuman') rk-badge-mn
-                                        @else rk-badge-mk @endif">
-                                        {{ $catName }}
-                                    </span>
-                                </div>
-                                <div class="card-body">
-                                    <div class="card-title">{{ $item->name }}</div>
-                                    <div class="card-desc">{{ $item->description }}</div>
-                                    <div class="card-footer-wrap">
-                                        <span class="rk-price">Rp{{ number_format($item->price, 0, ',', '.') }}</span>
-                                        <button class="rk-add-btn" onclick="addToCart({{ $item->id }})">
-                                            <i class="fas fa-plus" style="font-size:.7rem"></i> Tambah
-                                        </button>
-                                    </div>
+            @endforeach
+        </div>
+    @endforeach
+</div>
+
+{{-- ============================================================
+     DESKTOP VIEW (>= 1024px) — card grid
+     ============================================================ --}}
+<div class="wn-d-mobile-none">
+    @foreach($grouped as $catName => $catItems)
+        <div class="wn-menu-section" data-cat="{{ $catName }}">
+            <div class="wn-cat-label">
+                @if($catName === 'Makanan') <i class="fas fa-utensils" style="color:var(--amber);font-size:.85rem"></i>
+                @elseif($catName === 'Minuman') <i class="fas fa-glass-whiskey" style="color:var(--amber);font-size:.85rem"></i>
+                @endif
+                {{ $catName }}
+            </div>
+
+            <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap:16px; margin-bottom:8px">
+                @foreach($catItems as $i => $item)
+                    <div class="wn-col-item wn-animate" data-cat="{{ $catName }}" style="animation-delay:{{ $i * 0.04 }}s">
+                        <div class="wn-menu-card">
+                            <div class="wn-card-img-wrap">
+                                <img class="wn-card-img" src="{{ $item->img }}"
+                                     alt="{{ $item->name }}"
+                                     onerror="this.onerror=null;this.src='https://via.placeholder.com/300x160/FDE8C4/8B6340?text=🍜'">
+                                {{-- Badge hot/baru bisa dikustomisasi dari DB --}}
+                                @if(isset($item->badge) && $item->badge)
+                                    <span class="wn-card-badge">{{ $item->badge }}</span>
+                                @endif
+                                <span style="position:absolute;top:10px;right:10px">
+                                    @if($catName === 'Makanan')
+                                        <span class="wn-badge-food">{{ $catName }}</span>
+                                    @elseif($catName === 'Minuman')
+                                        <span class="wn-badge-drink">{{ $catName }}</span>
+                                    @endif
+                                </span>
+                            </div>
+                            <div class="wn-card-body">
+                                <div class="wn-card-name">{{ $item->name }}</div>
+                                <div class="wn-card-desc">{{ $item->description }}</div>
+                                <div class="wn-card-footer">
+                                    <span class="wn-card-price">Rp{{ number_format($item->price, 0, ',', '.') }}</span>
+                                    <button class="wn-add-btn" onclick="addToCart({{ $item->id }})">+</button>
                                 </div>
                             </div>
                         </div>
-                    @endforeach
-                </div>
+                    </div>
+                @endforeach
             </div>
-        @endforeach
-    </div>
-
-    @if($items->isEmpty())
-        <div class="rk-empty">
-            <div class="rk-empty-icon"><i class="fas fa-utensils"></i></div>
-            <div style="font-size:.95rem;font-weight:500;color:var(--text-primary)">Menu belum tersedia</div>
-            <div style="font-size:.8rem;margin-top:.25rem">Silakan cek kembali nanti</div>
         </div>
-    @endif
-
+    @endforeach
 </div>
 
-{{-- Toast Notification --}}
-<div id="rk-toast" style="position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--text-primary);color:var(--bg-primary);padding:10px 20px;border-radius:20px;font-size:.82rem;font-weight:500;z-index:9999;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap">
-    Item ditambahkan ke keranjang!
-</div>
+{{-- ============================================================
+     CART FAB (mobile sticky, visible when cart has items)
+     ============================================================ --}}
+@php $cartItems = session('cart', []); $cartTotal = array_sum(array_map(fn($i) => $i['price'] * $i['qty'], $cartItems)); @endphp
+@if(!empty($cartItems))
+    <a href="{{ url('/cart') }}" class="wn-cart-fab d-lg-none">
+        <div class="wn-cart-fab-left">
+            <div class="wn-cart-count">{{ count($cartItems) }}</div>
+            <span class="wn-cart-fab-text">Lihat Keranjang</span>
+        </div>
+        <span class="wn-cart-fab-price">Rp{{ number_format($cartTotal, 0, ',', '.') }} →</span>
+    </a>
+@endif
+
+@endif
+
 @endsection
 
 @section('script')
@@ -124,20 +147,38 @@
         })
         .then(r => r.json())
         .then(data => {
-            showToast(data.message || 'Item ditambahkan!');
+            showToast(data.message || '✓ Item ditambahkan ke keranjang!');
+            // Update cart badge counts
+            setTimeout(() => location.reload(), 600);
         })
-        .catch(() => showToast('Terjadi kesalahan.'));
-    }
-
-    function showToast(msg) {
-        const t = document.getElementById('rk-toast');
-        t.textContent = msg;
-        t.style.opacity = '1';
-        t.style.transform = 'translateX(-50%) translateY(0)';
-        setTimeout(() => {
-            t.style.opacity = '0';
-            t.style.transform = 'translateX(-50%) translateY(20px)';
-        }, 2200);
+        .catch(() => showToast('Terjadi kesalahan, coba lagi.'));
     }
 </script>
 @endsection
+
+<style>
+    /* Mobile/desktop visibility helpers (no Bootstrap dependency) */
+    /* .wn-d-desktop-none { display: block; }
+    .wn-d-mobile-none  { display: none; }
+
+    @media (min-width: 1024px) {
+        .wn-d-desktop-none { display: none !important; }
+        .wn-d-mobile-none  { display: block !important; }
+    } */
+
+     .wn-d-desktop-none { display: block; }
+    .wn-d-mobile-none  { display: none; }
+
+    /* Desktop */
+    @media (min-width: 1024px) {
+    .wn-d-desktop-none { display: none !important; }
+
+    .wn-d-mobile-none  {
+        display: block !important;
+
+        /* 🔥 Tambahan penting */
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+</style>

@@ -161,21 +161,22 @@ class MenuController extends Controller
 
             $itemDetails[] = [
                 'id' => $item['id'],
-                'price' => (int) ($item['price'] + ($item['price'] * 0.1)),
+                'price' => (int) round($item['price'] * 1.11),
                 'quantity' => $item['qty'],
                 'name' => substr($item['name'], 0, 50),
             ];
         }
 
-        $user = User::firstOrCreate([
-            'fullname' => $request->input('fullname'),
-            'phone' => $request->input('phone'),
-            'role_id' => 4
-        ]);
+        // $user = User::firstOrCreate([
+        //     'fullname' => $request->input('fullname'),
+        //     'phone' => $request->input('phone'),
+        //     'role_id' => 4
+        // ]);
 
         $order = Order::create([
             'order_code' => 'ORD-'.$tableNumber.'-'. time(),
-            'user_id' => $user->id,
+            'customer_name' => $request->input('fullname'),
+            'customer_phone' => $request->input('phone'),
             'subtotal' => (int) $totalAmount,
             'tax' => (int) round(0.1 * $totalAmount),
             'grand_total' => (int) round($totalAmount + (0.1 * $totalAmount)),
@@ -213,8 +214,8 @@ class MenuController extends Controller
                 ],
                     'item_details' => $itemDetails,
                     'customer_details' => [
-                        'first_name' => $user->fullname ?? 'Guest',
-                        'phone' => $user->phone,
+                        'first_name' => $order->customer_name ?? 'Guest',
+                        'phone' => $order->customer_phone,
                 ],
                     'payment_type' => 'qris',
             ];

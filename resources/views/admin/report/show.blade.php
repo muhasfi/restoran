@@ -31,8 +31,7 @@
                 <div class="row">
                     <div class="col-md-6">
                         <p>Dibuat Pada: {{ $order->created_at->format('d-m-Y H:i') }}</p>
-                        <p>Nama Pelanggan: {{ $order->customer_name }}</p>
-                        <p>Nomer Pelanggan: {{ $order->customer_phone }}</p>
+                        <p>Nama Pelanggan: {{ $order->user->fullname }}</p>
                         <p>Status:
                             <span class="badge {{ $order->status == 'settlement' ? 'bg-success' : ($order->status == 'pending' ? 'bg-warning' : ($order->status == 'cooked' ? 'bg-primary' : 'bg-danger')) }}">
                                 {{ $order->status }}

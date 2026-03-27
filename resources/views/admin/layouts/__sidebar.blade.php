@@ -81,6 +81,12 @@
                         <span>Manajemen Kategori</span>
                     </a>
                 </li>
+                <li class="sidebar-item {{ request()->routeIs('report') ? 'active' : '' }}">
+                    <a href="{{ route('report') }}" class='sidebar-link'>
+                        <i class="bi bi-bar-chart-fill  "></i>
+                        <span>Report</span>
+                    </a>
+                </li>
                 @endif
                 
                 <li class="sidebar-item">

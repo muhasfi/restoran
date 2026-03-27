@@ -30,6 +30,8 @@ Route::middleware('role:admin')->group(function (){
     Route::resource('categories', CategoryController::class);
     Route::resource('roles', RoleController::class);
     Route::resource('users', UserController::class);
+    Route::get('/reports', [DashboardController::class, 'report'])->name('report');
+    Route::get('/reports/{id}', [DashboardController::class, 'reportShow'])->name('reports.show');
 });
 
 Route::middleware('role:admin|cashier|chef')->group(function (){

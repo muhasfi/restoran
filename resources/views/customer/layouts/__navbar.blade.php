@@ -1,79 +1,73 @@
-<nav class="rk-navbar">
-    <div class="container">
-        <div class="d-flex align-items-center justify-content-between py-2">
+{{-- ========================================================
+     NAVBAR — Warung Nusantara
+     ======================================================== --}}
+@php $cartCount = count(session('cart', [])); @endphp
 
-            {{-- Brand --}}
-            <a href="{{ route('menu') }}" class="text-decoration-none">
-                <div class="navbar-brand-name">Restoranku</div>
-                <div class="navbar-brand-sub">Pilihan Lezat di Ujung Jari</div>
-            </a>
+<nav class="wn-navbar">
+    <div class="wn-navbar-inner">
 
-            {{-- Desktop Nav Links --}}
-            <div class="d-none d-lg-flex align-items-center gap-2">
-                <a href="{{ route('menu') }}" class="nav-link {{ request()->routeIs('menu') ? 'active' : '' }}">
-                    <i class="fas fa-utensils me-1"></i> Menu
-                </a>
+        {{-- Brand --}}
+        <a href="{{ route('menu') }}" class="wn-brand">
+            <div class="wn-brand-icon">🍜</div>
+            <div class="wn-brand-text">
+                <div class="wn-brand-name">Warung Nusantara</div>
+                <div class="wn-brand-sub">Digital Menu</div>
             </div>
+        </a>
 
-            {{-- Right Controls --}}
-            <div class="d-flex align-items-center gap-2">
-
-                {{-- Cart --}}
-                <a href="{{ url('/cart') }}" class="rk-cart-btn text-decoration-none">
-                    <i class="fas fa-shopping-bag" style="font-size:.9rem"></i>
-                    @php $cartCount = count(session('cart', [])); @endphp
-                    @if($cartCount > 0)
-                        <span class="rk-cart-badge">{{ $cartCount }}</span>
-                    @endif
-                </a>
-
-                {{-- Dark Mode Toggle --}}
-                <button class="rk-theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">
-                    <div class="rk-toggle-track">
-                        <div class="rk-toggle-thumb"></div>
-                    </div>
-                    <span class="rk-toggle-icon" id="theme-icon">
-                        <i class="fas fa-moon"></i>
-                    </span>
-                </button>
-
-                {{-- Mobile hamburger --}}
-                <button class="navbar-toggler d-lg-none border-0 bg-transparent p-1" type="button"
-                    data-bs-toggle="collapse" data-bs-target="#mobileNav" aria-label="Toggle navigation">
-                    <i class="fas fa-bars" style="color:var(--text-primary)"></i>
-                </button>
+        {{-- Table chip (visible when session has table number) --}}
+        @if(session('table_number'))
+            <div class="wn-table-chip">
+                <i class="fas fa-qrcode"></i>
+                Meja {{ session('table_number') }}
             </div>
-        </div>
+        @endif
 
-        {{-- Mobile collapse nav --}}
-        <div class="collapse d-lg-none" id="mobileNav">
-            <div class="py-2 border-top" style="border-color:var(--border-color)!important">
-                <a href="{{ route('menu') }}"
-                   class="d-flex align-items-center gap-2 py-2 px-1 text-decoration-none"
-                   style="color:var(--text-secondary);font-size:.875rem">
-                    <i class="fas fa-utensils" style="width:16px"></i> Menu
-                </a>
-                <a href="{{ url('/cart') }}"
-                   class="d-flex align-items-center gap-2 py-2 px-1 text-decoration-none"
-                   style="color:var(--text-secondary);font-size:.875rem">
-                    <i class="fas fa-shopping-bag" style="width:16px"></i> Keranjang
-                    @if($cartCount > 0)
-                        <span class="rk-cart-badge" style="position:static;width:auto;height:auto;padding:1px 7px;border-radius:10px">{{ $cartCount }}</span>
-                    @endif
-                </a>
-            </div>
+        {{-- Right Controls --}}
+        <div class="wn-nav-controls">
+
+            {{-- Cart (desktop) --}}
+            {{-- <a href="{{ url('/cart') }}" class="wn-cart-btn d-none d-lg-inline-flex" style="text-decoration:none">
+                <i class="fas fa-shopping-bag" style="font-size:.85rem"></i>
+                <span style="font-size:.82rem">Keranjang</span>
+                @if($cartCount > 0)
+                    <span class="wn-cart-badge">{{ $cartCount }}</span>
+                @endif
+            </a> --}}
+
+            {{-- Theme toggle --}}
+            <button class="wn-theme-toggle" onclick="wnToggleTheme()" aria-label="Toggle dark mode">
+                <div class="wn-toggle-track">
+                    <div class="wn-toggle-thumb"></div>
+                </div>
+                <span id="wn-theme-icon" style="font-size:.8rem; color:rgba(255,255,255,0.6)">
+                    <i class="fas fa-moon"></i>
+                </span>
+            </button>
+
+            {{-- Mobile hamburger --}}
+            <button class="wn-menu-toggle" id="wn-mobile-toggle" onclick="wnToggleMobileNav()" aria-label="Menu">
+                <i class="fas fa-bars" id="wn-toggle-icon"></i>
+            </button>
         </div>
     </div>
-</nav>
 
-{{-- Page Hero Header --}}
-<div class="rk-page-hero">
-    <h1>Menu Kami</h1>
-    <p>Scan QR meja Anda, lalu pilih menu favorit</p>
-    @if(session('table_number'))
-        <div class="rk-meja-badge">
-            <i class="fas fa-qrcode" style="font-size:.75rem"></i>
-            Meja {{ session('table_number') }}
-        </div>
-    @endif
-</div>
+    {{-- Mobile dropdown nav --}}
+    <div class="wn-mobile-nav" id="wn-mobile-nav">
+        <a href="{{ route('menu') }}" class="wn-mobile-nav-link {{ request()->routeIs('menu') ? 'active' : '' }}"
+           style="{{ request()->routeIs('menu') ? 'color:var(--amber-light)' : '' }}">
+            <i class="fas fa-utensils" style="width:18px"></i> Menu
+        </a>
+        <a href="{{ url('/cart') }}" class="wn-mobile-nav-link {{ request()->routeIs('cart') ? 'active' : '' }}"
+           style="{{ request()->routeIs('cart') ? 'color:var(--amber-light)' : '' }}">
+            <i class="fas fa-shopping-bag" style="width:18px"></i> Keranjang
+            @if($cartCount > 0)
+                <span class="wn-cart-badge" style="position:static;padding:1px 7px;border-radius:10px;width:auto;height:auto">{{ $cartCount }}</span>
+            @endif
+        </a>
+        <a href="{{ route('checkout') }}" class="wn-mobile-nav-link {{ request()->routeIs('checkout') ? 'active' : '' }}"
+           style="{{ request()->routeIs('checkout') ? 'color:var(--amber-light)' : '' }}">
+            <i class="fas fa-credit-card" style="width:18px"></i> Checkout
+        </a>
+    </div>
+</nav>
