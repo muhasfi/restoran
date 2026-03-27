@@ -129,7 +129,7 @@
         background-color: var(--bg-body);
         color: var(--text-primary);
         transition: background-color .3s, color .3s;
-        min-height: 100vh;
+        /* min-height: 100vh; */
     }
 
     a { color: var(--amber); text-decoration: none; }
