@@ -118,6 +118,11 @@
     <a href="{{ route('menu') }}" class="wn-cta" style="flex:1;min-width:160px">
         <i class="fas fa-utensils" style="margin-right:8px;font-size:.8rem"></i> Pesan Lagi
     </a>
+    <a href="{{ route('order.tracking', $order->order_code) }}" 
+       class="wn-cta" 
+       style="flex:1;min-width:160px;background:var(--bg-secondary);color:var(--amber);border:1.5px solid var(--amber)">
+        <i class="fas fa-satellite-dish" style="margin-right:8px;font-size:.8rem"></i> Lacak Pesanan
+    </a>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>

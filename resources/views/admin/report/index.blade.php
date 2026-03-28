@@ -52,6 +52,9 @@
                         <div class="col-md-3">
                             <button class="btn btn-primary">Filter</button>
                             <a href="{{ route('report') }}" class="btn btn-secondary">Reset</a>
+                            <a href="{{ route('reports.export', request()->only('month', 'year')) }}" class="btn btn-success" target="_blank">
+                                <i class="bi bi-printer"></i> Print
+                            </a>
                         </div>
                     </div>
                 </form>

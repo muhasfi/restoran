@@ -24,6 +24,7 @@ Route::get('/checkout', [MenuController::class, 'checkout'])->name('checkout');
 Route::post('/checkout/store', [MenuController::class, 'storeOrder'])->name('checkout.store');
 Route::get('/checkout/success/{orderId}', [MenuController::class, 'checkoutSuccess'])->name('checkout.success');
 
+Route::get('/order/tracking/{orderCode}', [MenuController::class, 'tracking'])->name('order.tracking');
 
 // admin routes
 Route::middleware('role:admin')->group(function (){
@@ -31,6 +32,7 @@ Route::middleware('role:admin')->group(function (){
     Route::resource('roles', RoleController::class);
     Route::resource('users', UserController::class);
     Route::get('/reports', [DashboardController::class, 'report'])->name('report');
+    Route::get('/reports/export', [DashboardController::class, 'export'])->name('reports.export');
     Route::get('/reports/{id}', [DashboardController::class, 'reportShow'])->name('reports.show');
 });
 

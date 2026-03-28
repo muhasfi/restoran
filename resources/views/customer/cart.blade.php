@@ -133,7 +133,7 @@
             $total    = $subtotal + $tax;
         @endphp
         <div>
-            <div class="wn-card wn-animate wn-d1" style="position:sticky;top:88px;margin-right:10px;">
+            <div class="wn-card wn-animate wn-d1" style="position:sticky;top:88px;">
 
                 {{-- Card header --}}
                 <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">
@@ -329,37 +329,15 @@
 </script>
 
 <style>
-    #cart-grid {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 24px;
-    }
-
     @media (min-width: 768px) {
-        #cart-grid {
-            grid-template-columns: 1fr 360px;
+        .wn-main > div > div:first-child > div[style*="grid-template-columns:1fr"] {
+            grid-template-columns: 1fr 380px !important;
         }
     }
-
-    @media (max-width: 767px) {
-        .wn-card.wn-animate.wn-d1 {
-            position: static !important;
-        }
-    }
-    @media (max-width: 767px) {
-        .wn-card.wn-animate.wn-d1 {
-            position: static !important;
-        }
-        
-        /* Kurangi padding konten di mobile */
-        .wn-main > div {
-            padding: 16px !important;
-        }
-    }
-    @media (max-width: 767px) {
-        .wn-cart-item {
-            margin-left: -9px;
-        }
+ 
+    /* Override grid untuk cart page */
+    @media (min-width: 768px) {
+        #cart-grid { grid-template-columns: 1fr 360px; }
     }
 </style>
 @endsection

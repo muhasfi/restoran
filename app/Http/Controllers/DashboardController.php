@@ -47,4 +47,23 @@ class DashboardController extends Controller
         // Return the view with the order details
         return view('admin.order.show', compact('order', 'orderItems'));
     }
+
+    public function export(Request $request)
+    {
+        $query = Order::query();
+
+        if ($request->month) {
+            $query->whereMonth('created_at', $request->month);
+        }
+        if ($request->year) {
+            $query->whereYear('created_at', $request->year);
+        }
+
+        $reports = $query->orderBy('created_at', 'desc')->get();
+
+        $month = $request->month ? date('F', mktime(0,0,0,$request->month,1)) : 'Semua Bulan';
+        $year  = $request->year  ?? 'Semua Tahun';
+
+        return view('admin.report.export', compact('reports', 'month', 'year'));
+    }
 }

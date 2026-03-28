@@ -590,7 +590,7 @@
     /* ============================================================
        BOTTOM NAV (mobile only)
     ============================================================ */
-    .wn-bottom-nav {
+    /* .wn-bottom-nav {
         display: none;
         position: fixed;
         bottom: 0; left: 0; right: 0;
@@ -633,7 +633,7 @@
         align-items: center;
         justify-content: center;
         padding: 0 3px;
-    }
+    } */
 
     /* ============================================================
        FILTER CHIPS (horizontal scroll, used in main content)
@@ -854,6 +854,210 @@
     .wn-add-btn-round:hover { background: var(--amber); }
     [data-theme="dark"] .wn-add-btn-round:hover { background: var(--amber-light); }
     .wn-add-btn-round:active { transform: scale(.9); }
+
+    /* ============================================================
+       MOBILE / DESKTOP VISIBILITY HELPERS
+       ============================================================ */
+    .wn-d-desktop-none { display: block; }
+    .wn-d-mobile-none  { display: none; }
+
+    @media (min-width: 1024px) {
+        .wn-d-desktop-none { display: none !important; }
+        .wn-d-mobile-none  {
+            display: block !important;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+    }
+
+    /* ============================================================
+       CARD — cursor pointer supaya terasa klikable
+       ============================================================ */
+    .wn-col-item  { cursor: pointer; }
+    .wn-menu-row  { cursor: pointer; }
+
+    /* ============================================================
+       MODAL OVERLAY
+       ============================================================ */
+    .wn-modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(10, 6, 2, .85);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity .3s ease;
+    }
+    .wn-modal-overlay.open {
+        opacity: 1;
+        pointer-events: all;
+    }
+
+    /* ============================================================
+       MODAL CARD
+       ============================================================ */
+    .wn-modal-card {
+        background: var(--amber-pale);
+        border: 1px solid rgba(232, 160, 32, .25);
+        border-radius: 20px;
+        overflow: hidden;
+        width: 100%;
+        max-width: 400px;
+        box-shadow: 0 32px 80px rgba(0, 0, 0, .7), 0 0 0 1px rgba(232, 160, 32, .1);
+        transform: translateY(28px) scale(.96);
+        transition: transform .35s cubic-bezier(.22, 1, .36, 1);
+        position: relative;
+    }
+    .wn-modal-overlay.open .wn-modal-card {
+        transform: translateY(0) scale(1);
+    }
+
+    /* Gambar */
+    .wn-modal-img-wrap {
+        position: relative;
+        height: 230px;
+        overflow: hidden;
+    }
+    .wn-modal-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform .4s ease;
+    }
+    .wn-modal-overlay.open .wn-modal-img {
+        transform: scale(1.04);
+    }
+    /* gradient scrim bawah gambar */
+    .wn-modal-img-wrap::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to bottom, transparent 45%, rgba(26, 16, 8, .92) 100%);
+    }
+
+    /* Nama menu overlay di atas gambar */
+    .wn-modal-img-name {
+        position: absolute;
+        bottom: 14px;
+        left: 16px;
+        right: 52px;
+        z-index: 2;
+        font-family: 'Playfair Display', serif;
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #fff;
+        text-shadow: 0 2px 8px rgba(0, 0, 0, .6);
+        line-height: 1.3;
+    }
+
+    /* Badge kategori */
+    .wn-modal-badge {
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        z-index: 2;
+        background: rgba(232, 160, 32, .2);
+        color: var(--amber, #e8a020);
+        font-size: .62rem;
+        font-weight: 700;
+        padding: 4px 10px;
+        border-radius: 20px;
+        border: 1px solid rgba(232, 160, 32, .4);
+        letter-spacing: .5px;
+        text-transform: uppercase;
+    }
+
+    /* Tombol close */
+    .wn-modal-close {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        z-index: 10;
+        width: 32px;
+        height: 32px;
+        background: rgba(26, 16, 8, .75);
+        border: 1px solid rgba(232, 160, 32, .3);
+        color: #f5e6c8;
+        border-radius: 50%;
+        font-size: .85rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background .2s, transform .15s;
+        line-height: 1;
+    }
+    .wn-modal-close:hover {
+        background: rgba(232, 160, 32, .25);
+        transform: scale(1.1);
+    }
+
+    /* Body modal */
+    .wn-modal-body {
+        padding: 18px 20px 22px;
+    }
+    .wn-modal-desc {
+        font-size: .82rem;
+        color: var(--text-muted, #9a7d58);
+        line-height: 1.7;
+        margin-bottom: 18px;
+    }
+    .wn-modal-divider {
+        height: 1px;
+        background: rgba(232, 160, 32, .15);
+        margin-bottom: 16px;
+    }
+    .wn-modal-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+    }
+    .wn-modal-price {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: var(--amber, #e8a020);
+        font-family: 'Playfair Display', serif;
+        white-space: nowrap;
+    }
+    .wn-modal-add-btn {
+        flex: 1;
+        background: var(--brown-dark);
+        color: #ffffff;
+        border: none;
+        border-radius: 10px;
+        padding: 12px 18px;
+        font-size: .88rem;
+        font-weight: 700;
+        cursor: pointer;
+        font-family: 'DM Sans', sans-serif;
+        letter-spacing: .3px;
+        transition: background .2s, transform .15s;
+    }
+    [data-theme="dark"] .wn-modal-add-btn { background: var(--amber); color: #1A0E06; }
+    .wn-modal-add-btn:hover { background: var(--amber); color: #fff; box-shadow: 0 6px 20px rgba(212,134,43,0.35); }
+    [data-theme="dark"] .wn-modal-add-btn:hover { background: var(--amber-light); color: #1A0E06; }
+    .wn-modal-add-btn:active { transform: scale(.98); }
+    .wn-modal-add-btn:hover {
+        background: #f0b840;
+        transform: scale(1.02);
+    }
+    .wn-modal-add-btn:active {
+        transform: scale(.97);
+    }
+
+    /* Mobile: modal full-width dengan sedikit margin */
+    @media (max-width: 480px) {
+        .wn-modal-card  { max-width: 100%; border-radius: 16px; }
+        .wn-modal-img-wrap { height: 200px; }
+    }
 
     /* ============================================================
        CART FAB (mobile sticky bar at bottom of menu)

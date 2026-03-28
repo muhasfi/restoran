@@ -49,7 +49,8 @@
                 {{ $catName }}
             </div>
             @foreach($catItems as $item)
-                <div class="wn-menu-row wn-animate" data-cat="{{ $catName }}">
+                <div class="wn-menu-row wn-animate" data-cat="{{ $catName }}"
+                     onclick="openModal({{ $item->id }}, '{{ $item->img }}', '{{ addslashes($item->name) }}', '{{ addslashes($item->description) }}', {{ $item->price }}, '{{ $catName }}')">
                     <div class="wn-row-thumb">
                         <img src="{{ $item->img }}"
                              alt="{{ $item->name }}"
@@ -60,7 +61,9 @@
                         <div class="wn-row-desc">{{ $item->description }}</div>
                         <div class="wn-row-price">Rp{{ number_format($item->price, 0, ',', '.') }}</div>
                     </div>
-                    <button class="wn-add-btn-round" onclick="addToCart({{ $item->id }})" aria-label="Tambah">+</button>
+                    <button class="wn-add-btn-round"
+                            onclick="event.stopPropagation(); addToCart({{ $item->id }})"
+                            aria-label="Tambah">+</button>
                 </div>
             @endforeach
         </div>
@@ -82,13 +85,14 @@
 
             <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap:16px; margin-bottom:8px">
                 @foreach($catItems as $i => $item)
-                    <div class="wn-col-item wn-animate" data-cat="{{ $catName }}" style="animation-delay:{{ $i * 0.04 }}s">
+                    <div class="wn-col-item wn-animate" data-cat="{{ $catName }}"
+                         style="animation-delay:{{ $i * 0.04 }}s"
+                         onclick="openModal({{ $item->id }}, '{{ $item->img }}', '{{ addslashes($item->name) }}', '{{ addslashes($item->description) }}', {{ $item->price }}, '{{ $catName }}')">
                         <div class="wn-menu-card">
                             <div class="wn-card-img-wrap">
                                 <img class="wn-card-img" src="{{ $item->img }}"
                                      alt="{{ $item->name }}"
                                      onerror="this.onerror=null;this.src='https://via.placeholder.com/300x160/FDE8C4/8B6340?text=🍜'">
-                                {{-- Badge hot/baru bisa dikustomisasi dari DB --}}
                                 @if(isset($item->badge) && $item->badge)
                                     <span class="wn-card-badge">{{ $item->badge }}</span>
                                 @endif
@@ -105,7 +109,8 @@
                                 <div class="wn-card-desc">{{ $item->description }}</div>
                                 <div class="wn-card-footer">
                                     <span class="wn-card-price">Rp{{ number_format($item->price, 0, ',', '.') }}</span>
-                                    <button class="wn-add-btn" onclick="addToCart({{ $item->id }})">+</button>
+                                    <button class="wn-add-btn"
+                                            onclick="event.stopPropagation(); addToCart({{ $item->id }})">+</button>
                                 </div>
                             </div>
                         </div>
@@ -116,69 +121,128 @@
     @endforeach
 </div>
 
-{{-- ============================================================
-     CART FAB (mobile sticky, visible when cart has items)
-     ============================================================ --}}
-@php $cartItems = session('cart', []); $cartTotal = array_sum(array_map(fn($i) => $i['price'] * $i['qty'], $cartItems)); @endphp
-@if(!empty($cartItems))
-    <a href="{{ url('/cart') }}" class="wn-cart-fab d-lg-none">
-        <div class="wn-cart-fab-left">
-            <div class="wn-cart-count">{{ count($cartItems) }}</div>
-            <span class="wn-cart-fab-text">Lihat Keranjang</span>
-        </div>
-        <span class="wn-cart-fab-price">Rp{{ number_format($cartTotal, 0, ',', '.') }} →</span>
-    </a>
 @endif
 
-@endif
+{{-- ============================================================
+     CART FAB — selalu ada di DOM, JS yang atur show/hide
+     ============================================================ --}}
+@php
+    $cartItems = Session::get('cart', []);
+    $cartTotal = array_sum(array_map(fn($i) => $i['price'] * $i['qty'], $cartItems));
+    $cartCount = count($cartItems);
+@endphp
+<a href="{{ url('/cart') }}" class="wn-cart-fab d-lg-none" id="cartFab"
+   style="{{ empty($cartItems) ? 'display:none' : '' }}">
+    <div class="wn-cart-fab-left">
+        <div class="wn-cart-count" id="fabCount">{{ $cartCount }}</div>
+        <span class="wn-cart-fab-text">Lihat Keranjang</span>
+    </div>
+    <span class="wn-cart-fab-price" id="fabPrice">Rp{{ number_format($cartTotal, 0, ',', '.') }} →</span>
+</a>
+
+{{-- ============================================================
+     MODAL DETAIL MENU
+     ============================================================ --}}
+<div class="wn-modal-overlay" id="menuModal" onclick="closeModalOutside(event)">
+    <div class="wn-modal-card" id="modalCard">
+        <button class="wn-modal-close" onclick="closeModal()">✕</button>
+        <div class="wn-modal-img-wrap">
+            <img class="wn-modal-img" id="modalImg" src="" alt="">
+            <span class="wn-modal-badge" id="modalBadge"></span>
+            <div class="wn-modal-img-name" id="modalName"></div>
+        </div>
+        <div class="wn-modal-body">
+            <div class="wn-modal-desc" id="modalDesc"></div>
+            <div class="wn-modal-divider"></div>
+            <div class="wn-modal-footer">
+                <span class="wn-modal-price" id="modalPrice"></span>
+                <button class="wn-modal-add-btn" id="modalAddBtn">+ Tambah ke Keranjang</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 @endsection
 
 @section('script')
 <script>
+    /* ============================================================
+       CART FAB — update tanpa reload
+       ============================================================ */
+    function updateCartFab(count, total) {
+        const fab   = document.getElementById('cartFab');
+        const cnt   = document.getElementById('fabCount');
+        const price = document.getElementById('fabPrice');
+
+        if (!fab) return;
+
+        cnt.textContent   = count;
+        price.textContent = 'Rp' + Number(total).toLocaleString('id-ID') + ' →';
+
+        if (count > 0) {
+            fab.style.display = '';
+            // animasi kecil biar keliatan update
+            fab.style.transform = 'scale(1.06)';
+            setTimeout(() => fab.style.transform = '', 200);
+        } else {
+            fab.style.display = 'none';
+        }
+    }
+
+    /* ============================================================
+       ADD TO CART
+       ============================================================ */
     function addToCart(menuId) {
         fetch("{{ route('cart.add') }}", {
-            method: 'POST',
+            method : 'POST',
             headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                'Content-Type' : 'application/json',
+                'X-CSRF-TOKEN' : '{{ csrf_token() }}'
             },
             body: JSON.stringify({ id: menuId })
         })
         .then(r => r.json())
         .then(data => {
-            showToast(data.message || '✓ Item ditambahkan ke keranjang!');
-            // Update cart badge counts
-            setTimeout(() => location.reload(), 600);
+            if (data.status === 'success') {
+                showToast(data.message || '✓ Item ditambahkan ke keranjang!');
+                updateCartFab(data.cart_count, data.cart_total);
+            } else {
+                showToast(data.message || 'Terjadi kesalahan.');
+            }
         })
         .catch(() => showToast('Terjadi kesalahan, coba lagi.'));
     }
+
+    /* ============================================================
+       MODAL
+       ============================================================ */
+    function openModal(id, img, name, desc, price, cat) {
+        document.getElementById('modalImg').src           = img;
+        document.getElementById('modalImg').alt           = name;
+        document.getElementById('modalName').textContent  = name;
+        document.getElementById('modalBadge').textContent = cat;
+        document.getElementById('modalDesc').textContent  = desc;
+        document.getElementById('modalPrice').textContent =
+            'Rp' + Number(price).toLocaleString('id-ID');
+
+        document.getElementById('modalAddBtn').onclick = function () {
+            addToCart(id);
+            closeModal();
+        };
+
+        document.getElementById('menuModal').classList.add('open');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+        document.getElementById('menuModal').classList.remove('open');
+        document.body.style.overflow = '';
+    }
+
+    function closeModalOutside(e) {
+        if (e.target.id === 'menuModal') closeModal();
+    }
+
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 </script>
 @endsection
-
-<style>
-    /* Mobile/desktop visibility helpers (no Bootstrap dependency) */
-    /* .wn-d-desktop-none { display: block; }
-    .wn-d-mobile-none  { display: none; }
-
-    @media (min-width: 1024px) {
-        .wn-d-desktop-none { display: none !important; }
-        .wn-d-mobile-none  { display: block !important; }
-    } */
-
-     .wn-d-desktop-none { display: block; }
-    .wn-d-mobile-none  { display: none; }
-
-    /* Desktop */
-    @media (min-width: 1024px) {
-    .wn-d-desktop-none { display: none !important; }
-
-    .wn-d-mobile-none  {
-        display: block !important;
-
-        /* 🔥 Tambahan penting */
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 0 20px;
-    }
-</style>

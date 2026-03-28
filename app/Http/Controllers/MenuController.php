@@ -36,31 +36,36 @@ class MenuController extends Controller
 
         if (!$menu) {
             return response()->json([
-                'status' => 'error',
+                'status'  => 'error',
                 'message' => 'Menu not found.'
             ]);
         }
 
-        $cart = Session::get('cart');
+        $cart = Session::get('cart', []); // tambah default [] agar tidak null
 
         if (isset($cart[$menuId])) {
             $cart[$menuId]['qty'] += 1;
         } else {
             $cart[$menuId] = [
-                'id' => $menu->id,
-                'name' => $menu->name,
+                'id'    => $menu->id,
+                'name'  => $menu->name,
                 'price' => $menu->price,
                 'image' => $menu->img,
-                'qty' => 1,
+                'qty'   => 1,
             ];
         }
 
         Session::put('cart', $cart);
-        
+
+        // Hitung total
+        $cartTotal = array_sum(array_map(fn($i) => $i['price'] * $i['qty'], $cart));
+
         return response()->json([
-            'status' => 'success',
-            'message' => 'Menu added to cart.',
-            'cart' => $cart
+            'status'     => 'success',
+            'message'    => 'Menu added to cart.',
+            'cart'       => $cart,
+            'cart_count' => count($cart),  // jumlah item unik
+            'cart_total' => $cartTotal,    // total harga
         ]);
     }
 
@@ -252,6 +257,15 @@ class MenuController extends Controller
         }
 
         return view('customer.success', compact('order', 'orderItems'));
+    }
 
+    public function tracking($orderCode)
+    {
+        $order = Order::with('orderItems.item')
+                    ->where('order_code', $orderCode)
+                    ->firstOrFail();
+        $orderItems = OrderItem::where('order_id', $order->id)->get();
+
+        return view('customer.tracking', compact('order', 'orderItems'));
     }
 }

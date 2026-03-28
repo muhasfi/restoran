@@ -220,6 +220,7 @@
 @endsection
 
 @section('script')
+@section('script')
 <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ env('MIDTRANS_CLIENT_KEY') }}"></script>
 <script>
     function wnSelectPayment(el) {
@@ -229,11 +230,58 @@
         if (radio) radio.checked = true;
     }
 
+    /* ============================================================
+       VALIDASI FIELD
+       ============================================================ */
+    function shakeField(fieldId) {
+        const el = document.getElementById(fieldId);
+        if (!el) return;
+        el.style.borderColor = '#e53e3e';
+        el.style.animation   = 'wnShake .35s ease';
+        setTimeout(() => {
+            el.style.animation   = '';
+            el.style.borderColor = 'var(--border)';
+        }, 800);
+    }
+
+    function validateForm() {
+        const nama  = document.querySelector('input[name="fullname"]').value.trim();
+        const hp    = document.querySelector('input[name="phone"]').value.trim();
+        let valid   = true;
+
+        if (!nama) {
+            shakeField('field-nama');
+            showToast('⚠ Nama harus diisi!');
+            valid = false;
+        }
+
+        // validasi hp hanya jika nama sudah ok, agar toast tidak tumpuk
+        if (valid && !hp) {
+            shakeField('field-hp');
+            showToast('⚠ Nomor HP harus diisi!');
+            valid = false;
+        }
+
+        // validasi format hp (minimal 9 digit angka)
+        if (valid && !/^[0-9]{9,15}$/.test(hp.replace(/[\s\-]/g, ''))) {
+            shakeField('field-hp');
+            showToast('⚠ Nomor HP tidak valid!');
+            valid = false;
+        }
+
+        return valid;
+    }
+
     document.addEventListener('DOMContentLoaded', function () {
         const payButton = document.getElementById('wn-pay-button');
         const form      = document.getElementById('wn-checkout-form');
 
         payButton.addEventListener('click', function () {
+
+            /* --- 1. Validasi dulu --- */
+            if (!validateForm()) return;
+
+            /* --- 2. Cek payment method --- */
             let selectedRadio = document.querySelector('input[name="payment_method"]:checked');
             if (!selectedRadio) {
                 showToast('⚠ Pilih metode pembayaran terlebih dahulu!');
@@ -248,8 +296,8 @@
                 // Midtrans flow
                 const formData = new FormData(form);
                 fetch('{{ route("checkout.store") }}', {
-                    method: 'POST',
-                    body: formData,
+                    method : 'POST',
+                    body   : formData,
                     headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
                 })
                 .then(r => r.json())
@@ -269,4 +317,16 @@
         });
     });
 </script>
+
+{{-- Animasi shake untuk field error --}}
+<style>
+@keyframes wnShake {
+    0%,100% { transform: translateX(0); }
+    20%      { transform: translateX(-6px); }
+    40%      { transform: translateX(6px); }
+    60%      { transform: translateX(-4px); }
+    80%      { transform: translateX(4px); }
+}
+</style>
+@endsection
 @endsection
