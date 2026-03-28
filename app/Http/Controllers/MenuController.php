@@ -139,105 +139,124 @@ class MenuController extends Controller
 
     public function storeOrder(Request $request)
     {
-        $cart = Session::get('cart');
+        $cart        = Session::get('cart');
         $tableNumber = Session::get('tableNumber');
 
-        if(empty($cart)) {
+        if (empty($cart)) {
             return redirect()->route('cart')->with('error', 'Keranjang masih kosong');
         }
 
         $validator = Validator::make($request->all(), [
             'fullname' => 'required|string|max:255',
-            'phone' => 'required|string|max:15',
+            'phone'    => 'required|string|max:15',
         ]);
 
         if ($validator->fails()) {
             return redirect()->route('checkout')->withErrors($validator);
         }
 
-        $total = 0;
-        foreach ($cart as $item) {
-            $total += $item['price'] * $item['qty'];
-        }
+        // ─── Konstanta tax (seragam dengan blade) ───────────────────
+        $TAX_RATE = 0.11;
 
-        $totalAmount = 0;
-        foreach ($cart as $item) {
-            $totalAmount += $item['qty'] * $item['price'];
+        // ─── Hitung subtotal & build itemDetails ────────────────────
+        $subtotal    = 0;
+        $itemDetails = [];
 
+        foreach ($cart as $item) {
+            $itemSubtotal = $item['price'] * $item['qty'];
+            $subtotal    += $itemSubtotal;
+
+            // price di itemDetails harus EXCLUDE tax
+            // karena gross_amount = subtotal + tax (dihitung terpisah)
             $itemDetails[] = [
-                'id' => $item['id'],
-                'price' => (int) round($item['price'] * 1.11),
+                'id'       => $item['id'],
+                'price'    => (int) $item['price'],   // ← harga asli, tanpa tax
                 'quantity' => $item['qty'],
-                'name' => substr($item['name'], 0, 50),
+                'name'     => substr($item['name'], 0, 50),
             ];
         }
 
-        // $user = User::firstOrCreate([
-        //     'fullname' => $request->input('fullname'),
-        //     'phone' => $request->input('phone'),
-        //     'role_id' => 4
-        // ]);
+        $tax        = (int) round($subtotal * $TAX_RATE);
+        $grandTotal = $subtotal + $tax;
 
+        // ─── Tambahkan tax sebagai 1 baris item di Midtrans ─────────
+        // Supaya SUM(itemDetails) == gross_amount (wajib di Midtrans)
+        $itemDetails[] = [
+            'id'       => 'TAX',
+            'price'    => $tax,
+            'quantity' => 1,
+            'name'     => 'PPN 11%',
+        ];
+
+        // ─── Simpan Order ────────────────────────────────────────────
         $order = Order::create([
-            'order_code' => 'ORD-'.$tableNumber.'-'. time(),
-            'customer_name' => $request->input('fullname'),
-            'customer_phone' => $request->input('phone'),
-            'subtotal' => (int) $totalAmount,
-            'tax' => (int) round(0.1 * $totalAmount),
-            'grand_total' => (int) round($totalAmount + (0.1 * $totalAmount)),
-            'status' => 'pending',
-            'table_number' => $tableNumber,
-            'payment_method' => $request->payment_method,
-            'note' => $request->note,
+            'order_code'      => 'ORD-' . $tableNumber . '-' . time(),
+            'customer_name'   => $request->input('fullname'),
+            'customer_phone'  => $request->input('phone'),
+            'subtotal'        => (int) $subtotal,
+            'tax'             => $tax,
+            'grand_total'     => $grandTotal,
+            'status'          => 'pending',
+            'table_number'    => $tableNumber,
+            'payment_method'  => $request->payment_method,
+            'note'            => $request->note,
         ]);
 
-        foreach ($cart as $itemId => $item) {
+        // ─── Simpan OrderItems ───────────────────────────────────────
+        foreach ($cart as $item) {
+            $itemSubtotal = (int) ($item['price'] * $item['qty']);
+            $itemTax      = (int) round($itemSubtotal * $TAX_RATE);
+
             OrderItem::create([
-                'order_id' => $order->id,
-                'item_id' => $item['id'],
-                'quantity' => $item['qty'],
-                'price' => (int) ($item['price'] * $item['qty']),
-                'tax' => (int) round(0.1 * $item['price'] * $item['qty']),
-                'total_price' => (int) round(($item['price'] * $item['qty']) + (0.1 * $item['price'] * $item['qty'])),
+                'order_id'    => $order->id,
+                'item_id'     => $item['id'],
+                'quantity'    => $item['qty'],
+                'price'       => $itemSubtotal,
+                'tax'         => $itemTax,
+                'total_price' => $itemSubtotal + $itemTax,
             ]);
         }
 
         Session::forget('cart');
 
-        if($request->payment_method == 'tunai') {
-            return redirect()->route('checkout.success', ['orderId' => $order->order_code])->with('success', 'Pesanan berhasil dibuat');
-        } else {
-            \Midtrans\Config::$serverKey = config('midtrans.server_key');
-            \Midtrans\Config::$isProduction = config('midtrans.is_production');
-            \Midtrans\Config::$isSanitized = true;
-            \Midtrans\Config::$is3ds = true;
+        // ─── Tunai ───────────────────────────────────────────────────
+        if ($request->payment_method == 'tunai') {
+            return redirect()
+                ->route('checkout.success', ['orderId' => $order->order_code])
+                ->with('success', 'Pesanan berhasil dibuat');
+        }
 
-            $params = [
-                    'transaction_details' => [
-                        'order_id' => $order->order_code,
-                        'gross_amount' =>  (int) $order->grand_total,
-                ],
-                    'item_details' => $itemDetails,
-                    'customer_details' => [
-                        'first_name' => $order->customer_name ?? 'Guest',
-                        'phone' => $order->customer_phone,
-                ],
-                    'payment_type' => 'qris',
-            ];
+        // ─── QRIS via Midtrans ───────────────────────────────────────
+        \Midtrans\Config::$serverKey    = config('midtrans.server_key');
+        \Midtrans\Config::$isProduction = config('midtrans.is_production');
+        \Midtrans\Config::$isSanitized  = true;
+        \Midtrans\Config::$is3ds        = true;
 
-            try {
-                $snapToken = \Midtrans\Snap::getSnapToken($params);
-                return response()->json([
-                    'status' => 'success',
-                    'snap_token' => $snapToken,
-                    'order_code' => $order->order_code,
-                ]);
-            } catch (\Exception $e) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'Gagal membuat pesanan. Silakan coba lagi.'
-                ]);
-            }
+        $params = [
+            'transaction_details' => [
+                'order_id'     => $order->order_code,
+                'gross_amount' => $grandTotal,  // ← sama persis dengan SUM(itemDetails)
+            ],
+            'item_details'     => $itemDetails,
+            'customer_details' => [
+                'first_name' => $order->customer_name ?? 'Guest',
+                'phone'      => $order->customer_phone,
+            ],
+            'payment_type' => 'qris',
+        ];
+
+        try {
+            $snapToken = \Midtrans\Snap::getSnapToken($params);
+            return response()->json([
+                'status'     => 'success',
+                'snap_token' => $snapToken,
+                'order_code' => $order->order_code,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status'  => 'error',
+                'message' => 'Gagal membuat pesanan. Silakan coba lagi.',
+            ]);
         }
     }
 

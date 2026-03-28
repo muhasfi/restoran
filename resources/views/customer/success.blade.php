@@ -66,11 +66,17 @@
                         <div style="font-weight:600;color:var(--text-primary)">Rp{{ number_format($orderItem->price, 0, ',', '.') }}</div>
                     </div>
                 @endforeach
-            </div>
+                {{-- Subtotal --}}
+                <div class="wn-receipt-item" style="margin-top:8px;padding-top:12px;border-top:1px dashed var(--border)">
+                    <div style="font-size:1rem;font-weight:600;color:var(--text-primary)">Subtotal</div>
+                    <div style="font-size:1rem;font-weight:600;color:var(--text-primary)">Rp{{ number_format($order->subtotal ?? 0, 0, ',', '.') }}</div>
+                </div>
 
-            {{-- Fee breakdown --}}
-            <div style="font-size:.75rem;color:var(--text-muted);margin-bottom:8px;display:flex;gap:12px;justify-content:flex-end">
-                <span>PPN: Rp{{ number_format($order->tax ?? 0, 0, ',', '.') }}</span>
+                {{-- PPN --}}
+                <div class="wn-receipt-item">
+                    <div style="font-size:1rem;font-weight:600;color:var(--text-primary)">PPN 11%</div>
+                    <div style="font-size:1rem;font-weight:600;color:var(--text-primary)">Rp{{ number_format($order->tax ?? 0, 0, ',', '.') }}</div>
+                </div>
             </div>
 
             <hr class="wn-receipt-divider">

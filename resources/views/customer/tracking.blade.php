@@ -131,6 +131,22 @@
         </div>
     </div>
     @endforeach
+        {{-- Subtotal --}}
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0 4px;border-top:1px dashed var(--border);margin-top:4px">
+        <div style="font-size:1rem;font-weight:700;color:var(--text-primary)">Subtotal</div>
+        <div style="font-size:.9rem;font-weight:700;color:var(--amber);flex-shrink:0">
+            Rp{{ number_format($order->subtotal ?? 0, 0, ',', '.') }}
+        </div>
+    </div>
+
+    {{-- PPN --}}
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:4px 0">
+        <div style="font-size:1rem;font-weight:700;color:var(--text-primary)">PPN 11%</div>
+        <div style="font-size:.9rem;font-weight:700;color:var(--amber);flex-shrink:0">
+            Rp{{ number_format($order->tax ?? 0, 0, ',', '.') }}
+        </div>
+    </div>
+    
     <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 0 0">
         <div style="font-size:.9rem;font-weight:700;color:var(--text-primary)">Total Bayar</div>
         <div style="font-size:1.05rem;font-weight:800;color:var(--amber)">
